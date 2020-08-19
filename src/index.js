@@ -1,11 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import * as serviceWorker from './serviceWorker';
 
+const NoteApp = () => {
+  const notesData = JSON.parse(localStorage.getItem('notes'));
+  const [notes, setNotes] = useState(notesData || []);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+
+  const addNote = (e) => {
+    e.preventDefault();
+    setNotes([...notes, { title, body }]);
+    setTitle('');
+    setBody('');
+  };
+
+  const removeNote = (title) => {
+    setNotes(notes.filter((note) => note.title !== title));
+  };
+
+  useEffect(() => {
+    localStorage.setItem('notes', JSON.stringify(notes));
+  });
+
+  return (
+    <div>
+      <h1>Notes</h1>
+      {notes.map((note) => (
+        <div key={note.title}>
+          <h3>{note.title}</h3>
+          <p>{note.body}</p>
+          <button onClick={() => removeNote(note.title)}>x</button>
+        </div>
+      ))}
+      <p>Add note</p>
+      <form onSubmit={addNote}>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} />
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+        ></textarea>
+        <button>Add note</button>
+      </form>
+    </div>
+  );
+};
+
 const App = (props) => {
   const [count, setCount] = useState(props.count);
   const [text, setText] = useState('');
+
+  useEffect(() => {
+    console.log('useEffect ran');
+    document.title = count;
+  });
 
   return (
     <div>
@@ -20,13 +69,9 @@ const App = (props) => {
   );
 };
 
-App.defaultProps = {
-  count: 0
-};
-
 ReactDOM.render(
   <React.StrictMode>
-    <App count={42} />
+    <NoteApp count={0} />
   </React.StrictMode>,
   document.getElementById('root')
 );
