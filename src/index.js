@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import * as serviceWorker from './serviceWorker';
 
+const App = (props) => {
+  const [count, setCount] = useState(props.count);
+  const [text, setText] = useState('');
+
+  return (
+    <div>
+      <p>
+        the current {text || 'count'} is {count}
+      </p>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+      <button onClick={() => setCount(count - 1)}>-1</button>
+      <button onClick={() => setCount(0)}>Reset</button>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+    </div>
+  );
+};
+
+App.defaultProps = {
+  count: 0
+};
+
 ReactDOM.render(
   <React.StrictMode>
-    <div>my new content</div>
+    <App count={42} />
   </React.StrictMode>,
   document.getElementById('root')
 );
